@@ -89,7 +89,7 @@ Details of how to run and connect to the database are below, together with how t
     docker compose run database mysql --host=database --user=codetest --password=swordfish codetest
     ```
 
-1. Running example scripts
+4. Running example scripts
     
     We have provided example code written in C, Node, Python, and R. These show how to use a programme in a separate Docker container to connect to the database, using an ORM library where appropriate, to load data from a CSV file, and to query data to output as a JSON file. There should be regarded as illustrative; it is fine to use any of these examples as the basis of your own solution, but we would prefer that you use technologies that you feel comfortable with.
 
@@ -106,6 +106,6 @@ Details of how to run and connect to the database are below, together with how t
     docker compose run example-r
     ```
     d. In each case, the programme loads data from the data/example.csv file into that table, and exports data from the database table to a JSON file in the data folder. Note that the scripts do not truncate the table, so each one you run will add additional content.
-2. Cleaning up
+5. Cleaning up
 
     To tidy up, bringing down all the containers and deleting them, run `docker compose down`.
