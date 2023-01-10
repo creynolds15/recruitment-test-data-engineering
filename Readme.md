@@ -36,10 +36,17 @@ We have provided a Github repo containing:
 There are a sequence of steps that we would like you to complete. We hope this won't take more than a couple of hours of your time.
 
 1. Fork the git repo to your own Github account.
-2. Devise a database schema to hold the data in the people and places CSV files, and apply it to the MySQL database. You may apply this schema via a script, via the MySQL command-line client, or via a GUI client.
-3. Create a Docker image for loading the CSV files, places.csv and people.csv, into the tables you have created in the database. Make sure the appropriate config is in the docker compose file. Your data ingest process can be implemented in any way that you like, as long as it runs within a Docker container. You may implement this via programme code in a language of your choice, or via the use of ETL tools.
-4. Create a Docker image for outputting a summary of content in the database. You may implement this using a programming language of your choice. The output must be in JSON format, and be written to a file in the data folder called **data/summary_output.json**. It should consist of a list of the countries, and a count of how many people were born in that country. We have supplied a sample output **data/sample_output.json** to compare your file against.
-5. Share a link to your cloned github repo with us so we can review your code ahead of your interview.
+2. Devise a database schema to hold the data in the people and places CSV files, and apply it to the MySQL database. Apply this schema via a script, either in SQL or another language of your choice.
+3. Create a Docker image for loading the CSV files, places.csv and people.csv, into the tables you have created in the database. Make sure the appropriate config is in the docker compose file. Your data ingest process should be implemented in a script, in any language you like, as long as it runs within a Docker container.
+4. Create a Docker image for outputting a summary of content in the database (or add to the one from Step 3). You may do the data processing using any programming language you like. 
+    - The output must be in JSON format, and be written to a file in the data folder called **data/summary_output.json**. It should consist of a list of the countries, and a count of how many people were born in that country. We have supplied a sample output **data/sample_output.json** to compare your file against.
+    - If you have time, generate an additional JSON file which shows the most common month of birth for each county in N. Ireland represented in the datasets.
+5. Share a link to your cloned github repo with us so we can review your code ahead of your interview. In summary, it should include: 
+     - the database schema generation script from Step 2
+     - Docker configuration data for the docker image(s) from Step 3-4
+     - the data ingestion script from Step 3
+     - the data processing script from Step 4
+     - the summary data file(s) generated in Step 4
 
 We have provided an example schema and code that shows how to handle a simple data ingest and output.
 
@@ -48,7 +55,6 @@ Details of how to run and connect to the database are below, together with how t
 ### Notes on completing these tasks
 
 - There is no right way to do this. We are interested in the choices that you make, how you justify them, and your development process.
-- Consider how normalized your schema should be, and whether or not you should be using foreign keys to join tables.
 - When you create a container, make sure that you add the container config to the docker compose.yml file, and add your Dockerfile and code to the images folder.
 - Make sure that your code is executable, and if you are working in a scripting language, make sure that your script has an appropriate “hash-bang” line (as featured in our example scripts).
 - Most of the example code uses ORM libraries to connect to the database. This is _not_ essential for the purpose of this test: your code should connect to the database and your queries should be implemented in whatever way you are most comfortable with.
@@ -61,34 +67,45 @@ Details of how to run and connect to the database are below, together with how t
 
 1. Install Docker
 
-    a. Make sure you have recent versions of Docker
-    b. Follow directions here: https://docs.docker.com/get-docker/
+    Make sure you have a recent version of Docker. 
+
+    Follow directions here: https://docs.docker.com/get-docker/.
 2. Build the images included in this git repo
     
-    a. This will build all of the images referenced in the Docker Compose file. You will need to re-run this after making code changes. (You can also specify individual services to build if that is more convenient.)
-    b. Run `docker compose build`
+    This will build all of the images referenced in the Docker Compose file. You will need to re-run this after making code changes. (You can also specify individual services to build if that is more convenient.) To build, run 
+    ```
+    docker compose build
+    ```
+
 3. Starting MySql
 
-    a. To start up the MySQL database. This will will take a short while to run the database’s start-up scripts.
-    b. Run `docker compose up database`
-    c. Optional: if you want to connect to the MySQL database via the command-line client. This may be useful for looking at the database schema or data.
-    d. Run `docker compose run database mysql --host=database --user=codetest --password=swordfish codetest`
+    a. To start up the MySQL database, run the following command. This will will take a short while to run the database’s start-up scripts.
+    ```
+    docker compose up database
+    ```
+
+    b. Optional: If you want to connect to the MySQL database via the command-line client, run the following command. This may be useful for looking at the database schema or data.
+    ```
+    docker compose run database mysql --host=database --user=codetest --password=swordfish codetest
+    ```
+
 4. Running example scripts
     
-    a. We have provided example code written in C, Node, Python, and R. These show how to use a programme in a separate Docker container to connect to the database, using an ORM library where appropriate, to load data from a CSV file, and to query data to output as a JSON file. There should be regarded as illustrative; it is fine to use any of these examples as the basis of your own solution, but we would prefer that you use technologies that you feel comfortable with.
-    b. Make sure the MySQL database is running, and then load the example schema with:
-        ```
-        docker compose run --no-TTY database mysql --host=database --user=codetest --password=swordfish codetest <example_schema.sql
-        ```
+    We have provided example code written in C, Node, Python, and R. These show how to use a programme in a separate Docker container to connect to the database, using an ORM library where appropriate, to load data from a CSV file, and to query data to output as a JSON file. There should be regarded as illustrative; it is fine to use any of these examples as the basis of your own solution, but we would prefer that you use technologies that you feel comfortable with.
+
+    a. Make sure the MySQL database is running, and then load the example schema with:
+    ```
+    docker compose run --no-TTY database mysql --host=database --user=codetest --password=swordfish codetest <example_schema.sql
+    ```
+
     c. Then make sure that the containers have been built with `docker compose build` and run one or more of the sample programmes with:
-        ```
-        docker compose run example-c
-        docker compose run example-node
-        docker compose run example-python
-        docker compose run example-r
-        ```
+    ```
+    docker compose run example-c
+    docker compose run example-node
+    docker compose run example-python
+    docker compose run example-r
+    ```
     d. In each case, the programme loads data from the data/example.csv file into that table, and exports data from the database table to a JSON file in the data folder. Note that the scripts do not truncate the table, so each one you run will add additional content.
 5. Cleaning up
 
-    a. To tidy up, bringing down all the containers and deleting them.
-    b. Run `docker compose down`
+    To tidy up, bringing down all the containers and deleting them, run `docker compose down`.
