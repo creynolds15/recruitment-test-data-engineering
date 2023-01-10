@@ -42,18 +42,3 @@ services:
     command: ["./example.R"]
     volumes:
       - ./data:/data
-
-  example-ruby:
-    image: example-ruby
-    build: images/example-ruby
-    command: ["./example.rb"]
-    volumes:
-      - ./data:/data
-
-  example-swift:
-    image: example-swift
-    platform: linux/amd64
-    build: images/example-swift
-    command: ["swift", "run"]
-    volumes:
-      - ./data:/data

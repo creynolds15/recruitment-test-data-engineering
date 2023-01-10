@@ -7,9 +7,7 @@ This test is designed to showcase your understanding of databases and data proce
 There are two stages to this code test:
 
 1. Preparing code at home ahead of your interview.
-2. Pairing with us at the interview, making additions to your code.
-
-The pairing phase is to give us an indication of what it will be like to work together, and should be regarded as a collaborative effort.
+2. Discussion of decisions made and possible improvement given more time during the interview.
 
 ## Prerequisites
 
@@ -17,7 +15,6 @@ The pairing phase is to give us an indication of what it will be like to work to
 - Knowledge of a programming language, including how to read and write files, process data, and access a MySQL database.
 - Familiarity with Docker for container management, which we use through the Docker Compose tool. You will need Docker and Docker Compose installed on your development machine.
 - Familiarity with Git for source control, and a github.com account which will be used for sharing your code.
-- Zoom, which we will use for the pairing.
 
 We have included example data and programme code. The example schema creates a simple table, with example code in several common programming languages to load data from a CSV file and output to a JSON file. There are instructions towards the bottom of this document explaining how to use the Docker containers, start the database, and use the examples.
 
@@ -26,7 +23,7 @@ We have included example data and programme code. The example schema creates a s
 We have provided a Github repo containing:
 
 - A **docker compose.yml** file that configures a container for the MySQL database, and the example scripts’ containers.
-- An **images** folder containing example programmes showing how the database can be accessed from C, Node, Python, R, Ruby, and Swift.
+- An **images** folder containing example programmes showing how the database can be accessed from C, Node, Python, and R.
 - An **example_schema.sql** file containing a table schema used by the example scripts.
 - A **data** folder containing four files:
   - **example.csv** A tiny dataset, used by the example scripts.
@@ -60,68 +57,38 @@ Details of how to run and connect to the database are below, together with how t
 - The MySQL database storage is ephemeral; it will not persist, so make sure all schema and data queries are repeatable.
 - You may find it easier to work with a subset of the data when developing your ingest.
 
-## Pairing activity at your interview
+## Steps to use using the images in the git repo
 
-We will spend 90 minutes at your interview pairing with you. This will include:
+1. Install Docker
 
-- Looking at your current code and solution.
-- Modifying your output code, to add several new output files containing different subsets of the data. Be prepared to make different queries of the database, to manipulate data in your programme code, and to output data to disk as JSON and CSV files.
+    a. Make sure you have recent versions of Docker
+    b. Follow directions here: https://docs.docker.com/get-docker/
+2. Build the images included in this git repo
+    
+    a. This will build all of the images referenced in the Docker Compose file. You will need to re-run this after making code changes. (You can also specify individual services to build if that is more convenient.)
+    b. Run `docker compose build`
+3. Starting MySql
 
-## Notes on using the images in the git repo
+    a. To start up the MySQL database. This will will take a short while to run the database’s start-up scripts.
+    b. Run `docker compose up database`
+    c. Optional: if you want to connect to the MySQL database via the command-line client. This may be useful for looking at the database schema or data.
+    d. Run `docker compose run database mysql --host=database --user=codetest --password=swordfish codetest`
+4. Running example scripts
+    
+    a. We have provided example code written in C, Node, Python, and R. These show how to use a programme in a separate Docker container to connect to the database, using an ORM library where appropriate, to load data from a CSV file, and to query data to output as a JSON file. There should be regarded as illustrative; it is fine to use any of these examples as the basis of your own solution, but we would prefer that you use technologies that you feel comfortable with.
+    b. Make sure the MySQL database is running, and then load the example schema with:
+        ```
+        docker compose run --no-TTY database mysql --host=database --user=codetest --password=swordfish codetest <example_schema.sql
+        ```
+    c. Then make sure that the containers have been built with `docker compose build` and run one or more of the sample programmes with:
+        ```
+        docker compose run example-c
+        docker compose run example-node
+        docker compose run example-python
+        docker compose run example-r
+        ```
+    d. In each case, the programme loads data from the data/example.csv file into that table, and exports data from the database table to a JSON file in the data folder. Note that the scripts do not truncate the table, so each one you run will add additional content.
+5. Cleaning up
 
-### Requirements
-
-Make sure you have recent versions of Docker and Docker Compose.
-
-### Building the images
-
-This will build all of the images referenced in the Docker Compose file. You will need to re-run this after making code changes. (You can also specify individual services to build if that is more convenient.)
-
-```
-docker compose build
-```
-
-### Starting MySQL
-
-To start up the MySQL database. This will will take a short while to run the database’s start-up scripts.
-
-```
-docker compose up database
-```
-
-Optional: if you want to connect to the MySQL database via the command-line client. This may be useful for looking at the database schema or data.
-
-```
-docker compose run database mysql --host=database --user=codetest --password=swordfish codetest
-```
-
-### Example scripts
-
-We have provided example code written in C, Node, Python, R, Ruby, and Swift. These show how to use a programme in a separate Docker container to connect to the database, using an ORM library where appropriate, to load data from a CSV file, and to query data to output as a JSON file. There should be regarded as illustrative; it is fine to use any of these examples as the basis of your own solution, but we would prefer that you use technologies that you feel comfortable with.
-
-Make sure the MySQL database is running, and then load the example schema with:
-
-```
-docker compose run --no-TTY database mysql --host=database --user=codetest --password=swordfish codetest <example_schema.sql
-```
-
-Then make sure that the containers have been built with `docker compose build` and run one or more of the sample programmes with:
-
-```
-docker compose run example-c
-docker compose run example-node
-docker compose run example-python
-docker compose run example-r
-docker compose run example-ruby
-docker compose run example-swift
-```
-
-In each case, the programme loads data from the data/example.csv file into that table, and exports data from the database table to a JSON file in the data folder. Note that the scripts do not truncate the table, so each one you run will add additional content.
-
-### Cleaning up
-
-To tidy up, bringing down all the containers and deleting them.
-
-```
-docker compose down
-```
+    a. To tidy up, bringing down all the containers and deleting them.
+    b. Run `docker compose down`
